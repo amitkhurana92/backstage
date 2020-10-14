@@ -37,6 +37,7 @@ describe('createRouter', () => {
       addOrUpdateEntity: jest.fn(),
       addEntities: jest.fn(),
       removeEntityByUid: jest.fn(),
+      batchAddOrUpdateEntities: jest.fn(),
     };
     locationsCatalog = {
       addLocation: jest.fn(),

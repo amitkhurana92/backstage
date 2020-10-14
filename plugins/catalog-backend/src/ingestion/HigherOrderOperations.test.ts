@@ -15,12 +15,7 @@
  */
 
 import { getVoidLogger } from '@backstage/backend-common';
-import {
-  Entity,
-  ENTITY_DEFAULT_NAMESPACE,
-  Location,
-  LocationSpec,
-} from '@backstage/catalog-model';
+import { Entity, Location, LocationSpec } from '@backstage/catalog-model';
 import { EntitiesCatalog, LocationsCatalog } from '../catalog';
 import { LocationUpdateStatus } from '../catalog/types';
 import { DatabaseLocationUpdateLogStatus } from '../database/types';
@@ -41,6 +36,7 @@ describe('HigherOrderOperations', () => {
       addOrUpdateEntity: jest.fn(),
       addEntities: jest.fn(),
       removeEntityByUid: jest.fn(),
+      batchAddOrUpdateEntities: jest.fn(),
     };
     locationsCatalog = {
       addLocation: jest.fn(),
@@ -192,8 +188,7 @@ describe('HigherOrderOperations', () => {
         entities: [{ entity: desc, location }],
         errors: [],
       });
-      entitiesCatalog.entities.mockResolvedValue([]);
-      entitiesCatalog.addEntities.mockResolvedValue(undefined);
+      entitiesCatalog.batchAddOrUpdateEntities.mockResolvedValue(undefined);
 
       await expect(
         higherOrderOperation.refreshAllLocations(),
@@ -205,17 +200,8 @@ describe('HigherOrderOperations', () => {
         type: 'some',
         target: 'thing',
       });
-      expect(entitiesCatalog.entities).toHaveBeenCalledTimes(1);
-      expect(entitiesCatalog.entities).toHaveBeenNthCalledWith(
-        1,
-        expect.arrayContaining([
-          { key: 'kind', values: ['Component'] },
-          { key: 'metadata.namespace', values: [ENTITY_DEFAULT_NAMESPACE] },
-          { key: 'metadata.name', values: ['c1'] },
-        ]),
-      );
-      expect(entitiesCatalog.addEntities).toHaveBeenCalledTimes(1);
-      expect(entitiesCatalog.addEntities).toHaveBeenNthCalledWith(
+      expect(entitiesCatalog.batchAddOrUpdateEntities).toHaveBeenCalledTimes(1);
+      expect(entitiesCatalog.batchAddOrUpdateEntities).toHaveBeenNthCalledWith(
         1,
         [expect.objectContaining({ metadata: { name: 'c1' } })],
         '123',
